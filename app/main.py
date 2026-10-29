@@ -1,31 +1,15 @@
 
 from fastapi import FastAPI, HTTPException
 
+from app.transaction_data import TRANSACTIONS
+from app.transaction_service import explain_transaction
+
+
 app = FastAPI(
     title="Mwangaza AI",
     description="AI-powered payment operations assistant",
     version="0.1.0",
 )
-
-#fictional payment records for development and testing
-
-TRANSACTIONS = {
-    "TXN-1042": {
-        "transaction_id": "TXN-1042",
-        "amount": 2500.00,
-        "currency": "KES",
-        "status": "FAILED",
-        "reason": "Insufficient funds",
-    },
-    "TXN-1043": {
-        "transaction_id": "TXN-1043",
-        "amount": 1200.00,
-        "currency": "KES",
-        "status": "SUCCESS",
-        "reason": None,
-    },
-}
-
 
 
 @app.get("/")
@@ -40,9 +24,24 @@ def root():
 def health_check():
     return {"status": "healthy"}
 
+
 @app.get("/transactions")
 def list_transactions():
     return list(TRANSACTIONS.values())
+
+
+@app.get("/transactions/{transaction_id}/explanation")
+def get_transaction_explanation(transaction_id: str):
+    result = explain_transaction(transaction_id)
+
+    if not result["found"]:
+        raise HTTPException(
+            status_code=404,
+            detail=result["explanation"],
+        )
+
+    return result
+
 
 @app.get("/transactions/{transaction_id}")
 def get_transaction(transaction_id: str):
