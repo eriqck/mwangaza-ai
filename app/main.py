@@ -3,6 +3,8 @@ from fastapi import FastAPI, HTTPException
 
 from app.transaction_data import TRANSACTIONS
 from app.transaction_service import explain_transaction
+from app.assistant_service import answer_question
+from app.schemas import AssistantRequest, AssistantResponse
 
 
 app = FastAPI(
@@ -54,3 +56,15 @@ def get_transaction(transaction_id: str):
         )
 
     return transaction
+
+@app.post("/assistant/ask")
+def ask_assistant(payload: dict):
+    question = payload.get("question", "")
+
+    if not question.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Question cannot be empty",
+        )
+
+    return answer_question(question)
