@@ -379,7 +379,7 @@ These are planned improvements, not currently implemented features.
 ## Author
 
 **Eric Mwangi**  
-Computer Science Graduate | Software & AI Application Development
+Software Engineer | Software & AI Application Development
 
 GitHub: https://github.com/eriqck
 
