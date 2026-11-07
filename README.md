@@ -1,197 +1,170 @@
-# Mwangaza AI
+Mwangaza AI
+An AI-powered payment operations assistant built around Kenyan payment workflows.
 
-An AI-assisted payment operations application built around Kenyan payment workflows. Mwangaza AI helps users understand transaction outcomes through a REST API backed by PostgreSQL, with explanations grounded in verified transaction records.
+Mwangaza AI helps users understand payment outcomes by combining PostgreSQL-backed transaction retrieval with Google's Gemini generative AI.
 
-This project demonstrates backend application development, database integration, API design, testing, and reliable handling of payment information.
+The application retrieves verified transaction records from PostgreSQL and uses Gemini to generate clear, natural-language explanations. Financial facts remain grounded in database records, while fallback handling ensures the assistant can still provide factual responses when the AI service is unavailable.
 
-## Current Features
-
+This project demonstrates backend application development, generative AI integration, database engineering, API design, automated testing, and responsible AI application development.
+Current Features
 - REST API built with FastAPI.
 - PostgreSQL database for persistent transaction storage.
+- Gemini API integration for natural-language explanations.
+- Database-grounded AI responses.
 - Health-check endpoint.
 - Endpoint for listing transactions.
 - Transaction lookup by ID, with case-insensitive matching.
 - Transaction explanations based on recorded payment outcomes.
 - Payment assistant endpoint for transaction-related questions.
+- Rule-based question classification.
+- Automatic database fallback when Gemini is unavailable.
 - Input validation and appropriate HTTP 404 responses.
 - Automated tests using pytest.
 - Fictional Kenyan shilling (KES) transaction records.
-
-## Technology Stack
-
+Technology Stack
 - Python
 - FastAPI
 - PostgreSQL
 - Psycopg
+- Google Gemini API
+- Google Gen AI SDK
 - Uvicorn
 - Pydantic
+- python-dotenv
 - pytest
 - Git
-
-## Project Structure
-
-```text
+Project Structure
 mwangaza-ai/
 ├── app/
 │   ├── main.py
 │   ├── database.py
 │   ├── transaction_service.py
 │   ├── assistant_service.py
+│   ├── gemini_service.py
 │   ├── question_classifier.py
 │   └── schemas.py
 ├── database/
 │   ├── schema.sql
 │   └── seed.sql
 ├── tests/
+│   ├── test_main.py
+│   ├── test_transaction_service.py
+│   ├── test_assistant_service.py
+│   └── test_question_classifier.py
 ├── .env
 ├── .gitignore
 ├── requirements.txt
 └── README.md
-```
 
-## Run Locally
+Architecture
+Mwangaza AI separates financial data retrieval from AI-generated explanations.
 
-### 1. Prerequisites
-
+The application follows this workflow:
+1. A user submits a payment-related question.
+2. The question classifier identifies the user's intent.
+3. The assistant extracts the transaction ID.
+4. The transaction service retrieves the corresponding record from PostgreSQL.
+5. The backend validates that the transaction exists.
+6. Gemini receives the user's question and the verified transaction facts.
+7. Gemini generates a natural-language explanation.
+8. The API returns the answer to the user.
+Reliability and AI Safety
+The system follows several important principles:
+- PostgreSQL is the authoritative source of transaction information.
+- Gemini does not have direct database access.
+- The model receives only the transaction information required to answer the question.
+- The model is instructed not to invent transaction amounts, statuses, or failure reasons.
+- If Gemini is unavailable, the assistant falls back to a factual database-generated explanation.
+- Unknown transaction IDs are rejected rather than passed to Gemini for speculation.
+This approach demonstrates how generative AI can be integrated into financial applications while maintaining control over the underlying financial facts.
+Run Locally
+1. Prerequisites
 Install:
 - Python 3.10 or later
 - PostgreSQL
 - Git
-
-### 2. Clone the repository
-
-```powershell
+- A Google AI Studio API key
+2. Clone the repository
 git clone https://github.com/eriqck/mwangaza-ai.git
 cd mwangaza-ai
-```
 
-### 3. Create and activate a virtual environment
-
-```powershell
+3. Create and activate a virtual environment
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-```
 
-### 4. Install dependencies
-
-```powershell
+4. Install dependencies
 python -m pip install -r requirements.txt
-```
 
-### 5. Create the PostgreSQL database
-
+5. Create the PostgreSQL database
 Connect to PostgreSQL:
-
-```powershell
 psql -U postgres -h localhost -p 5432
-```
 
 Create the database:
-
-```sql
 CREATE DATABASE mwangaza_ai;
 \q
-```
 
-### 6. Configure environment variables
-
-Create a `.env` file in the project root:
-
-```env
+6. Configure environment variables
+Create a .env file in the project root:
 DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/mwangaza_ai
-```
 
-Replace `YOUR_PASSWORD` with your PostgreSQL password.
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY
+GEMINI_MODEL=YOUR_CONFIGURED_GEMINI_MODEL
 
-Never commit `.env` or expose database credentials.
+Replace the placeholders with your actual configuration.
 
-### 7. Create the database table and sample records
+Obtain your Gemini API key through Google AI Studio.
 
+Never commit .env, expose API keys, or publish database credentials.
+7. Create the database table and sample records
 Run:
-
-```powershell
 psql -U postgres -h localhost -p 5432 -d mwangaza_ai -f database/schema.sql
-```
 
 Then:
-
-```powershell
 psql -U postgres -h localhost -p 5432 -d mwangaza_ai -f database/seed.sql
-```
 
 The seed script uses conflict handling to avoid duplicate transaction IDs.
-
-### 8. Start the API
-
-```powershell
+8. Start the API
 python -m uvicorn app.main:app --reload
-```
 
-### 9. Explore the API
-
+9. Explore the API
 - Health check: http://127.0.0.1:8000/health
 - List transactions: http://127.0.0.1:8000/transactions
 - Interactive API documentation: http://127.0.0.1:8000/docs
+API Endpoints
+Method	Endpoint	Description
+GET	/	API welcome message
+GET	/health	Check API health
+GET	/transactions	List transactions
+GET	/transactions/{transaction_id}	Retrieve a transaction
+GET	/transactions/{transaction_id}/explanation	Explain a transaction outcome
+POST	/assistant/ask	Ask a payment-related question
 
-## API Endpoints
 
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/health` | Check API health |
-| GET | `/transactions` | List transactions |
-| GET | `/transactions/{transaction_id}` | Retrieve a transaction |
-| GET | `/transactions/{transaction_id}/explanation` | Explain a transaction outcome |
-| POST | `/assistant/ask` | Ask a payment-related question |
-
-Example assistant request:
-
-```json
+Example Assistant Request
 {
   "question": "Why did transaction TXN-1042 fail?"
 }
-```
 
-The assistant retrieves the corresponding transaction record and returns an explanation based on the stored information.
+The assistant retrieves the corresponding transaction record and uses Gemini to explain the recorded outcome.
 
-## Run Tests
+Example transaction data:
+{
+  "transaction_id": "TXN-1042",
+  "amount": 2500.0,
+  "currency": "KES",
+  "status": "FAILED",
+  "reason": "Insufficient funds"
+}
 
-```powershell
+The assistant uses these verified facts to formulate its response.
+Run Tests
 python -m pytest -v
-```
 
-The tests cover API endpoints, transaction retrieval, question classification, and assistant responses.
-
-## Architecture and Reliability
-
-Mwangaza AI separates transaction retrieval from question interpretation.
-
-- PostgreSQL stores the authoritative transaction records.
-- The transaction service retrieves verified information.
-- The question classifier identifies the user's intent.
-- The assistant service constructs responses using retrieved records.
-
-The current assistant uses a rule-based question classifier and database-backed retrieval. It does not yet use a generative language model.
-
-This separation helps prevent unsupported financial claims: transaction facts come from stored records rather than being invented by an AI model.
-
-## Roadmap
-
-- [x] Build the initial payment operations API.
-- [x] Add automated tests.
-- [x] Integrate PostgreSQL.
-- [x] Implement transaction explanations.
-- [x] Build a database-backed payment assistant.
-- [x] Add repeatable database schema and seed scripts.
-- [ ] Improve natural-language understanding.
-- [ ] Explore controlled AI-assisted responses.
-- [ ] Add audit logging and stronger error handling.
-- [ ] Build a user-facing interface.
-- [ ] Evaluate response accuracy and safe fallback behavior.
-
-## Data and Security
-
-All transaction records are fictional and intended for development and testing.
-
-No real customer information, bank credentials, or live payment integrations are used.
-
-Mwangaza AI is a learning and portfolio prototype, not a production banking or payment system.
+The automated tests cover:
+- API endpoints.
+- Transaction retrieval.
+- Question classification.
+- Assistant responses.
+- Gemini response simulation through mocking.
+- Database fallback when Gemini is unavailable.
+The assistant tests use mocked Gemini responses to avoid unnecessary external API calls during automated testing.
