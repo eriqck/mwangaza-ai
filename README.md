@@ -19,6 +19,26 @@ This project demonstrates practical application engineering involving generative
 
 ## System Architecture
 <img width="2252" height="1440" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/c57f1a38-b51f-4c5f-b158-f4595c5a1e54" />
+How the architecture works
+Component	Responsibility
+Frontend	Accepts questions and displays AI responses.
+FastAPI	Receives requests and coordinates backend services.
+Assistant Service	Classifies questions, extracts transaction IDs and manages AI interactions.
+Transaction Service	Retrieves trusted transaction records and explanations.
+Neon PostgreSQL	Stores transaction amounts, currencies, statuses and failure reasons.
+Gemini API	Converts verified transaction information into understandable explanations.
+
+Example: Why did TXN-1042 fail?
+1. User asks: "Why did TXN-1042 fail?"
+2. Frontend sends the question to FastAPI through /assistant/ask.
+3. Assistant Service identifies the transaction ID.
+4. Transaction Service retrieves TXN-1042 from Neon PostgreSQL.
+5. PostgreSQL returns the verified record: KES 2,500, FAILED, insufficient funds.
+6. Gemini receives the question and verified transaction facts, then generates an explanation.
+7. FastAPI returns the response to the frontend for display.
+Important architectural decision: Gemini does not connect directly to PostgreSQL. Your backend retrieves the transaction facts and supplies the relevant context to Gemini. This helps prevent the AI from inventing transaction amounts, statuses or failure reasons.
+
+If Gemini is unavailable, the backend can fall back to a database-based explanation.
 
 
 ## Current Features
