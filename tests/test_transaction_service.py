@@ -35,3 +35,9 @@ def test_transaction_id_white_space_is_handled():
 
         assert result["found"] is True
         assert result["transaction_id"] == "TXN-1042"
+
+def test_failed_transaction_returns_correct_reason():
+    result = explain_transaction("TXN-1042")
+
+    assert result["found"] is True
+    assert result["reason"] == "Insufficient funds"

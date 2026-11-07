@@ -42,6 +42,8 @@ def explain_transaction(transaction_id: str) -> dict:
         "status": status,
         "amount": transaction["amount"],
         "currency": transaction["currency"],
+        "reason": reason,
         "explanation": explanation,
         "source": "transaction_record",
+        
     }
