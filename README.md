@@ -19,14 +19,6 @@ This project demonstrates practical application engineering involving generative
 
 ## System Architecture
 <img width="2252" height="1440" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/c57f1a38-b51f-4c5f-b158-f4595c5a1e54" />
-## How the Architecture Works
-## Component	## Responsibility
-Frontend	              Accepts questions and displays AI responses.
-FastAPI	                Receives requests and coordinates backend services.
-Assistant Service	      Classifies questions, extracts transaction IDs and manages AI interactions.
-Transaction Service	    Retrieves trusted transaction records and explanations.
-Neon PostgreSQL	        Stores transaction amounts, currencies, statuses and failure reasons.
-Gemini API	            Converts verified transaction information into understandable explanations.
 
 ## Example: Why did TXN-1042 fail?
 1. User asks: "Why did TXN-1042 fail?"
