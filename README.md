@@ -17,6 +17,10 @@ The application also includes a database-generated fallback response when the AI
 
 This project demonstrates practical application engineering involving generative AI, backend development, database integration, API design, frontend development, cloud deployment, automated testing and responsible AI implementation.
 
+## System Architecture
+<img width="2252" height="1440" alt="mermaid-diagram" src="https://github.com/user-attachments/assets/c57f1a38-b51f-4c5f-b158-f4595c5a1e54" />
+
+
 ## Current Features
 
 ### AI Payment Assistant
