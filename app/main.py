@@ -1,8 +1,11 @@
 
 from fastapi import FastAPI, HTTPException
 
-from app.transaction_data import TRANSACTIONS
-from app.transaction_service import explain_transaction
+from app.transaction_service import (
+    explain_transaction,
+    get_transaction_records,
+    get_transaction_record,
+)
 from app.assistant_service import answer_question
 from app.schemas import AssistantRequest, AssistantResponse
 
@@ -29,7 +32,7 @@ def health_check():
 
 @app.get("/transactions")
 def list_transactions():
-    return list(TRANSACTIONS.values())
+    return get_transaction_records()
 
 
 @app.get("/transactions/{transaction_id}/explanation")
@@ -47,7 +50,7 @@ def get_transaction_explanation(transaction_id: str):
 
 @app.get("/transactions/{transaction_id}")
 def get_transaction(transaction_id: str):
-    transaction = TRANSACTIONS.get(transaction_id.upper())
+    transaction = get_transaction_record(transaction_id)
 
     if transaction is None:
         raise HTTPException(
@@ -57,14 +60,10 @@ def get_transaction(transaction_id: str):
 
     return transaction
 
-@app.post("/assistant/ask")
-def ask_assistant(payload: dict):
-    question = payload.get("question", "")
 
-    if not question.strip():
-        raise HTTPException(
-            status_code=400,
-            detail="Question cannot be empty",
-        )
-
-    return answer_question(question)
+@app.post(
+    "/assistant/ask",
+    response_model=AssistantResponse,
+)
+def ask_assistant(payload: AssistantRequest):
+    return answer_question(payload.question)
