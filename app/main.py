@@ -1,5 +1,8 @@
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.transaction_service import (
     explain_transaction,
@@ -16,13 +19,18 @@ app = FastAPI(
     version="0.1.0",
 )
 
+BASE_DIR = Path(__file__).resolve().parent
+
+app.mount(
+    "/static",
+    StaticFiles(directory=BASE_DIR / "static"),
+    name="static",
+)
+
 
 @app.get("/")
 def root():
-    return {
-        "name": "Mwangaza AI",
-        "message": "Payment operations API is running",
-    }
+    return FileResponse(BASE_DIR / "static" / "index.html")
 
 
 @app.get("/health")

@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Mwangaza AI - Your intelligent payment operations assistant.">
+    <title>Mwangaza AI | Payment Operations Assistant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-shell">
+
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-icon">M</div>
+                <div>
+                    <h1>Mwangaza AI</h1>
+                    <p>PAYMENT OPERATIONS ASSISTANT</p>
+                </div>
+            </div>
+
+            <div class="system-status">
+                <span class="status-dot"></span>
+                <span>Assistant online</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="welcome-section">
+                <div class="eyebrow">INTELLIGENT PAYMENT SUPPORT</div>
+                <h2>Understand your payments<br>with <span>greater clarity.</span></h2>
+                <p>
+                    Ask questions about payment failures, transaction statuses,
+                    and transaction details. Mwangaza AI uses verified transaction
+                    records to provide clear explanations.
+                </p>
+            </section>
+
+            <section class="chat-card">
+                <div class="chat-heading">
+                    <div>
+                        <h3>Payment Assistant</h3>
+                        <p>Ask a question to get started</p>
+                    </div>
+                    <span class="secure-label">● SECURE SESSION</span>
+                </div>
+
+                <div id="chat-messages" class="chat-messages" aria-live="polite">
+                    <div class="message assistant-message">
+                        <div class="message-avatar">M</div>
+                        <div class="message-content">
+                            <div class="message-label">MWANGAZA AI</div>
+                            <div class="message-bubble">
+                                Hello! I'm Mwangaza AI. I can help you understand
+                                payment failures, check transaction statuses,
+                                and retrieve transaction details.
+
+                                <br><br>
+                                What would you like to know?
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suggestions">
+                    <p>TRY ASKING</p>
+                    <button class="suggestion-button" data-question="Why did transaction TXN-1042 fail?">
+                        Why did TXN-1042 fail?
+                    </button>
+                    <button class="suggestion-button" data-question="What is the status of TXN-1043?">
+                        Check TXN-1043 status
+                    </button>
+                </div>
+
+                <form id="chat-form" class="chat-form">
+                    <label for="question-input" class="sr-only">
+                        Enter your payment question
+                    </label>
+                    <input
+                        type="text"
+                        id="question-input"
+                        placeholder="Ask about a transaction..."
+                        autocomplete="off"
+                        required
+                    >
+                    <button type="submit" id="send-button">
+                        Send <span>→</span>
+                    </button>
+                </form>
+
+                <p class="disclaimer">
+                    Mwangaza AI uses fictional demonstration transactions.
+                    It is not connected to a live banking system.
+                </p>
+            </section>
+
+            <footer class="page-footer">
+                <span>MWANGAZA AI</span>
+                <span>AI-POWERED PAYMENT OPERATIONS</span>
+            </footer>
+        </main>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
